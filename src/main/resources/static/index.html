@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech-demo</title>
+</head>
+<body>
+<button id="startButton">Start</button>
+<button id="stopButton">Stop</button>
+<p id="statusText"></p>
+<script>
+    let mediaRecorder;
+    let chunks = [];
+
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const statusText = document.getElementById('statusText');
+
+    // 开始录音按钮点击事件
+    startButton.addEventListener('click', () => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                statusText.textContent = 'Recording...';
+                console.log('Recording');
+
+                // 录音数据可用时触发事件
+                mediaRecorder.addEventListener('dataavailable', event => {
+                    chunks.push(event.data);
+                });
+            })
+            .catch(error => {
+                console.error('Access media failed:', error);
+            });
+    });
+
+    // 停止录音按钮点击事件
+    stopButton.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+            statusText.textContent = ''; // 清空录音状态文字
+            console.log('Stopped');
+
+            // 导出录音文件
+            mediaRecorder.addEventListener('stop', () => {
+                const blob = new Blob(chunks, { type: 'audio/wav' });
+                const timestamp = new Date().getTime();
+                const fileName = `recording_${timestamp}.wav`;
+
+                // 创建FormData对象，并将音频文件和文件名添加到其中
+                const formData = new FormData();
+                formData.append('audioFile', blob, fileName);
+
+                // 发起POST请求将音频文件发送到后端
+                fetch('/process-audio', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(result => {
+                        console.log(result);
+                        // 执行其他操作
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+    });
+</script>
+</body>
+</html>
