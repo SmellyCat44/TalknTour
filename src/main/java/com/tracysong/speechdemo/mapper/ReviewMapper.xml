@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tracysong.speechdemo.mapper.WishMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="WishResultMap" type="com.tracysong.speechdemo.entity.Users">
+        <result column="user_id" property="userId"/>
+        <result column="review_pwd" property="reviewId"/>
+        <result column="place_id" property="placeId"/>
+        <result column="score" property="score"/>
+        <result column="comment" property="comment"/>
+        <result column="img1" property="img1"/>
+        <result column="img2" property="img2"/>
+        <result column="img3" property="img3"/>
+        <result column="img4" property="img4"/>
+        <result column="review_date" property="reviewDate"/>
+    </resultMap>
+</mapper>

@@ -37,8 +37,26 @@ public class PlaceService {
         }
     }
 
+    public PlacesSearchResponse getPlacesNearBy1(Location location, String keyword) {
+        try {
+            GeoApiContext context = this.getGooglePlaceApi();
+            LatLng cur_location = new LatLng(location.getLatitude(), location.getLongitude()); // Replace with user's location
+            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, cur_location)
+                    .keyword(keyword) // Replace with your keyword
+                    .rankby(RankBy.DISTANCE)
+                    .await();
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch nearby places", e);
+        }
+    }
+
+
+//    public PlacesSearchResponse getRestaurantNearBy(Location location) {
+//        return getPlacesNearBy(location, PlaceType.RESTAURANT, DEFAULT_RADIUS);
+//    }
     public PlacesSearchResponse getRestaurantNearBy(Location location) {
-        return getPlacesNearBy(location, PlaceType.RESTAURANT, DEFAULT_RADIUS);
+        return getPlacesNearBy1(location, "restaurant"); // Replace "restaurant" with your keyword
     }
 
     public PlacesSearchResponse getLodgingNearBy(Location location) {
